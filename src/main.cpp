@@ -1,22 +1,6 @@
 #include "main.h"
 
 /**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
-
-/**
  * Runs initialization code. This occurs as soon as the program is started.
  *
  * All other competition modes are blocked by initialize; it is recommended
@@ -24,9 +8,6 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
-	pros::lcd::register_btn1_cb(on_center_button);
 }
 
 /**
@@ -73,33 +54,25 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-#define LEFT_WHEELS_PORT 11
-#define RIGHT_WHEELS_PORT 1
+#define LEFT_FRONT_WHEELS_PORT 11
+#define RIGHT_FRONT_WHEELS_PORT 1
+#define LEFT_BACK_WHEELS_PORT 11
+#define RIGHT_BACK_WHEELS_PORT 1
+#define DIGITAL_SENSOR_PORT 'A'
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
-
-  pros::c::adi_pin_mode(3, INPUT);
+	pros::Motor left_wheels (LEFT_FRONT_WHEELS_PORT);
+  pros::Motor right_wheels (RIGHT_FRONT_WHEELS_PORT, true); // This reverses the motor
+  pros::c::adi_pin_mode(2, INPUT);
+	pros::ADIDigitalIn button (DIGITAL_SENSOR_PORT);
 
 	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
-		left_mtr = left;
-		right_mtr = right;
-		pros::Motor left_wheels (LEFT_WHEELS_PORT);
-pros::Motor right_wheels (RIGHT_WHEELS_PORT, true); // This reverses the motor
-pros::Controller master (CONTROLLER_MASTER);
+		pros::lcd::print(2, "LimitSwitch ->%d<-", pros::c::adi_digital_read(2));
+    pros::lcd::print(3, "button ->%d<-", button.get_value());
 
-while (true) {
-	left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
-	right_wheels.move(master.get_analog(ANALOG_RIGHT_Y));
+	  left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
+	  right_wheels.move(master.get_analog(ANALOG_RIGHT_Y));
 
-	pros::delay(2);
-}
 		pros::delay(20);
 	}
 }
