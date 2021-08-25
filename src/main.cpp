@@ -39,7 +39,18 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+
+	pros::lcd::print(1, "Bombexploding in 3");
+	pros::delay(1000);
+	pros::lcd::print(1, "Bombexploding in 2");
+	pros::delay(1000);
+	pros::lcd::print(1, "Bombexploding in 1");
+	pros::delay(1000);
+	pros::lcd::print(1, "You are dead");
+
+
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -73,6 +84,5 @@ void opcontrol() {
 	  left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
 	  right_wheels.move(master.get_analog(ANALOG_RIGHT_Y));
 
-		pros::delay(20);
 	}
 }
