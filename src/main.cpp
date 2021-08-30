@@ -2,9 +2,9 @@
 #include "motors.h"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::Motor left_front_wheel (LEFT_FRONT_WHEELS_PORT, true);
+pros::Motor left_front_wheel (LEFT_FRONT_WHEELS_PORT, true); // This reverses the motor
 pros::Motor left_back_wheel (LEFT_BACK_WHEELS_PORT);
-pros::Motor right_front_wheel (RIGHT_FRONT_WHEELS_PORT); // This reverses the motor
+pros::Motor right_front_wheel (RIGHT_FRONT_WHEELS_PORT);
 pros::Motor right_back_wheel (RIGHT_BACK_WHEELS_PORT, true); // This reverses the motor
 /**
  * Runs initialization code. This occurs as soon as the program is started.
