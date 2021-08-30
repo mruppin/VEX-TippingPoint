@@ -48,8 +48,6 @@ void autonomous() {
 	pros::lcd::print(1, "Bombexploding in 1");
 	pros::delay(1000);
 	pros::lcd::print(1, "You are dead");
-
-
 }
 
 /**
@@ -65,15 +63,17 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-#define LEFT_FRONT_WHEELS_PORT 11
-#define RIGHT_FRONT_WHEELS_PORT 1
+#define LEFT_FRONT_WHEELS_PORT 1
+#define RIGHT_FRONT_WHEELS_PORT 10
 #define LEFT_BACK_WHEELS_PORT 11
-#define RIGHT_BACK_WHEELS_PORT 1
+#define RIGHT_BACK_WHEELS_PORT 20
 #define DIGITAL_SENSOR_PORT 'A'
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_wheels (LEFT_FRONT_WHEELS_PORT);
-  pros::Motor right_wheels (RIGHT_FRONT_WHEELS_PORT, true); // This reverses the motor
+	pros::Motor left_front_wheel (LEFT_FRONT_WHEELS_PORT, true);
+	pros::Motor left_back_wheel (LEFT_BACK_WHEELS_PORT);
+	pros::Motor right_front_wheel (RIGHT_FRONT_WHEELS_PORT); // This reverses the motor
+	pros::Motor right_back_wheel (RIGHT_BACK_WHEELS_PORT, true); // This reverses the motor
   pros::c::adi_pin_mode(2, INPUT);
 	pros::ADIDigitalIn button (DIGITAL_SENSOR_PORT);
 
@@ -81,8 +81,11 @@ void opcontrol() {
 		pros::lcd::print(2, "LimitSwitch ->%d<-", pros::c::adi_digital_read(2));
     pros::lcd::print(3, "button ->%d<-", button.get_value());
 
-	  left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
-	  right_wheels.move(master.get_analog(ANALOG_RIGHT_Y));
+		left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y));
+		left_back_wheel.move(master.get_analog(ANALOG_LEFT_Y));
+		right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+		right_back_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+		    pros::delay(2);
 
 	}
 }
