@@ -1,5 +1,11 @@
 #include "main.h"
+#include "motors.h"
 
+pros::Controller master(pros::E_CONTROLLER_MASTER);
+pros::Motor left_front_wheel (LEFT_FRONT_WHEELS_PORT, true);
+pros::Motor left_back_wheel (LEFT_BACK_WHEELS_PORT);
+pros::Motor right_front_wheel (RIGHT_FRONT_WHEELS_PORT); // This reverses the motor
+pros::Motor right_back_wheel (RIGHT_BACK_WHEELS_PORT, true); // This reverses the motor
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -63,17 +69,8 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-#define LEFT_FRONT_WHEELS_PORT 1
-#define RIGHT_FRONT_WHEELS_PORT 10
-#define LEFT_BACK_WHEELS_PORT 11
-#define RIGHT_BACK_WHEELS_PORT 20
-#define DIGITAL_SENSOR_PORT 'A'
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_front_wheel (LEFT_FRONT_WHEELS_PORT, true);
-	pros::Motor left_back_wheel (LEFT_BACK_WHEELS_PORT);
-	pros::Motor right_front_wheel (RIGHT_FRONT_WHEELS_PORT); // This reverses the motor
-	pros::Motor right_back_wheel (RIGHT_BACK_WHEELS_PORT, true); // This reverses the motor
+
   pros::c::adi_pin_mode(2, INPUT);
 	pros::ADIDigitalIn button (DIGITAL_SENSOR_PORT);
 
