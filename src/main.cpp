@@ -1,11 +1,16 @@
 #include "main.h"
 #include "motors.h"
+#include "sensors.h"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::Motor left_front_wheel (LEFT_FRONT_WHEELS_PORT, true); // This reverses the motor
 pros::Motor left_back_wheel (LEFT_BACK_WHEELS_PORT);
 pros::Motor right_front_wheel (RIGHT_FRONT_WHEELS_PORT);
 pros::Motor right_back_wheel (RIGHT_BACK_WHEELS_PORT, true); // This reverses the motor
+pros::Motor sweeper_motor (SWEEPER_PORT, true); // This reverses the motor
+pros::Motor elevator_motor (ELEVATOR_PORT);
+
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -14,10 +19,11 @@ pros::Motor right_back_wheel (RIGHT_BACK_WHEELS_PORT, true); // This reverses th
  */
 void initialize() {
 	pros::lcd::initialize();
+	pros::ADIUltrasonic ultrasonic (ULTRA_PING_PORT, ULTRA_ECHO_PORT);
 }
 
 /**
- * Runs while the robot is in the disabled state of Field Management System or
+ * Runs while the robSWEEPER_PORTot is in the disabled state of Field Management System or
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
@@ -47,13 +53,11 @@ void competition_initialize() {}
  */
 void autonomous() {
 
-	pros::lcd::print(1, "Bombexploding in 3");
-	pros::delay(1000);
-	pros::lcd::print(1, "Bombexploding in 2");
-	pros::delay(1000);
-	pros::lcd::print(1, "Bombexploding in 1");
-	pros::delay(1000);
-	pros::lcd::print(1, "You are dead");
+  right_front_wheel.move_relative(1000, MOTOR_MAX_SPEED);
+  left_front_wheel.move_relative(1000, MOTOR_MAX_SPEED);
+  right_back_wheel.move_relative(1000, MOTOR_MAX_SPEED);
+  left_back_wheel.move_relative(1000, MOTOR_MAX_SPEED);
+
 }
 
 /**
@@ -70,19 +74,26 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-
-  pros::c::adi_pin_mode(2, INPUT);
+	pros::c::adi_pin_mode(2, INPUT);
 	pros::ADIDigitalIn button (DIGITAL_SENSOR_PORT);
 
 	while (true) {
-		pros::lcd::print(2, "LimitSwitch ->%d<-", pros::c::adi_digital_read(2));
-    pros::lcd::print(3, "button ->%d<-", button.get_value());
+	//	pros::lcd::print(2, "LimitSwitch ->%d<-", pros::c::adi_digital_read(2));
+    // pros::lcd::print(3, "button ->%d<-", button.get_value());
 
 		left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y));
 		left_back_wheel.move(master.get_analog(ANALOG_LEFT_Y));
 		right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
 		right_back_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+		if (master.get_digital(DIGITAL_A)){
+			elevator_motor.move(127);
+			sweeper_motor.move(127);
+		} else{
+			elevator_motor.move(0);
+			sweeper_motor.move(0);
+		}
 		    pros::delay(2);
 
 	}
+	
 }
