@@ -51,6 +51,14 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
+
+void tankDrive(){
+		left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y));
+		left_back_wheel.move(master.get_analog(ANALOG_LEFT_Y));
+		right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+		right_back_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+}
 void autonomous() {
 
   right_front_wheel.move_relative(1000, MOTOR_MAX_SPEED);
@@ -80,15 +88,14 @@ void opcontrol() {
 	while (true) {
 	//	pros::lcd::print(2, "LimitSwitch ->%d<-", pros::c::adi_digital_read(2));
     // pros::lcd::print(3, "button ->%d<-", button.get_value());
-
-		left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y));
-		left_back_wheel.move(master.get_analog(ANALOG_LEFT_Y));
-		right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
-		right_back_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+	tankDrive();
 		if (master.get_digital(DIGITAL_A)){
 			elevator_motor.move(127);
 			sweeper_motor.move(127);
-		} else{
+		} else if (master.get_digital(DIGITAL_B)){
+			elevator_motor.move(-127);
+			sweeper_motor.move(-127);
+		} else {
 			elevator_motor.move(0);
 			sweeper_motor.move(0);
 		}
