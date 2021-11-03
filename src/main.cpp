@@ -3,13 +3,12 @@
 #include "sensors.h"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::Motor left_front_wheel (LEFT_FRONT_WHEELS_PORT, true); // This reverses the motor
-pros::Motor left_back_wheel (LEFT_BACK_WHEELS_PORT);
-pros::Motor right_front_wheel (RIGHT_FRONT_WHEELS_PORT);
-pros::Motor right_back_wheel (RIGHT_BACK_WHEELS_PORT, true); // This reverses the motor
-pros::Motor sweeper_motor (SWEEPER_PORT, true); // This reverses the motor
-pros::Motor elevator_motor (ELEVATOR_PORT);
-
+pros::Motor left_front_wheel(LEFT_FRONT_WHEELS_PORT); // This reverses the motor
+pros::Motor left_back_wheel(LEFT_BACK_WHEELS_PORT);
+pros::Motor right_front_wheel(RIGHT_FRONT_WHEELS_PORT);
+pros::Motor right_back_wheel(RIGHT_BACK_WHEELS_PORT); // This reverses the motor
+pros::Motor sweeper_motor(SWEEPER_PORT, true);		  // This reverses the motor
+pros::Motor elevator_motor(ELEVATOR_PORT);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -17,9 +16,10 @@ pros::Motor elevator_motor (ELEVATOR_PORT);
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {
+void initialize()
+{
 	pros::lcd::initialize();
-	pros::ADIUltrasonic ultrasonic (ULTRA_PING_PORT, ULTRA_ECHO_PORT);
+	pros::ADIUltrasonic ultrasonic(ULTRA_PING_PORT, ULTRA_ECHO_PORT);
 }
 
 /**
@@ -51,21 +51,61 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-
-
-void tankDrive(){
-		left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y));
-		left_back_wheel.move(master.get_analog(ANALOG_LEFT_Y));
-		right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
-		right_back_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+void moveForward()
+{
+	left_front_wheel.move(127);
+	left_back_wheel.move(127);
+	right_front_wheel.move(127);
+	right_back_wheel.move(-127);
 }
-void autonomous() {
-
-  right_front_wheel.move_relative(1000, MOTOR_MAX_SPEED);
-  left_front_wheel.move_relative(1000, MOTOR_MAX_SPEED);
-  right_back_wheel.move_relative(1000, MOTOR_MAX_SPEED);
-  left_back_wheel.move_relative(1000, MOTOR_MAX_SPEED);
-
+void moveBack()
+{
+	left_front_wheel.move(-127);
+	left_back_wheel.move(-127);
+	right_front_wheel.move(-127);
+	right_back_wheel.move(-127);
+}
+void turnLeft()
+{
+	left_front_wheel.move(-127);
+	left_back_wheel.move(-127);
+	right_front_wheel.move(127);
+	right_back_wheel.move(127);
+}
+void turnRight()
+{
+	left_front_wheel.move(127);
+	left_back_wheel.move(127);
+	right_front_wheel.move(-127);
+	right_back_wheel.move(-127);
+}
+void tankDrive()
+{
+	left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y));
+	left_back_wheel.move(master.get_analog(ANALOG_LEFT_Y));
+	right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+	right_back_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+}
+void elevatorLift()
+{
+	if (master.get_digital(DIGITAL_A))
+	{
+		elevator_motor.move(127);
+		sweeper_motor.move(127);
+	}
+	else if (master.get_digital(DIGITAL_B))
+	{
+		elevator_motor.move(-127);
+		sweeper_motor.move(-127);
+	}
+	else
+	{
+		elevator_motor.move(0);
+		sweeper_motor.move(0);
+	}
+}
+void autonomous()
+{
 }
 
 /**
@@ -81,26 +121,15 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
+void opcontrol()
+{
 	pros::c::adi_pin_mode(2, INPUT);
-	pros::ADIDigitalIn button (DIGITAL_SENSOR_PORT);
+	pros::ADIDigitalIn button(DIGITAL_SENSOR_PORT);
 
-	while (true) {
-	//	pros::lcd::print(2, "LimitSwitch ->%d<-", pros::c::adi_digital_read(2));
-    // pros::lcd::print(3, "button ->%d<-", button.get_value());
-	tankDrive();
-		if (master.get_digital(DIGITAL_A)){
-			elevator_motor.move(127);
-			sweeper_motor.move(127);
-		} else if (master.get_digital(DIGITAL_B)){
-			elevator_motor.move(-127);
-			sweeper_motor.move(-127);
-		} else {
-			elevator_motor.move(0);
-			sweeper_motor.move(0);
-		}
-		    pros::delay(2);
-
+	while (true)
+	{
+		//pros::lcd::print(2, "LimitSwitch ->%d<-", pros::c::adi_digital_read(2));
+		//pros::lcd::print(3, "button ->%d<-", button.get_value());
+		tankDrive();
+		elevatorLift();
 	}
-	
-}
