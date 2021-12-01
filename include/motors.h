@@ -5,3 +5,4 @@
 #define SWEEPER_PORT 7
 #define ELEVATOR_PORT 4
 #define MOTOR_MAX_SPEED 100 // The motor has the 36 Gearset
+int speedSetting = 0;

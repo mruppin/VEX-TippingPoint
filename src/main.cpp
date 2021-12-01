@@ -2,6 +2,7 @@
 #include "motors.h"
 #include "sensors.h"
 
+
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::Motor left_front_wheel(LEFT_FRONT_WHEELS_PORT); // This reverses the motor
 pros::Motor left_back_wheel(LEFT_BACK_WHEELS_PORT);
@@ -54,37 +55,42 @@ void competition_initialize() {}
 void moveForward()
 {
 	left_front_wheel.move(127);
-	left_back_wheel.move(127);
+	left_back_wheel.move(-127);
 	right_front_wheel.move(127);
 	right_back_wheel.move(-127);
 }
 void moveBack()
 {
 	left_front_wheel.move(-127);
-	left_back_wheel.move(-127);
+	left_back_wheel.move(127);
 	right_front_wheel.move(-127);
-	right_back_wheel.move(-127);
+	right_back_wheel.move(127);
 }
 void turnLeft()
 {
 	left_front_wheel.move(-127);
-	left_back_wheel.move(-127);
+	left_back_wheel.move(127);
 	right_front_wheel.move(127);
-	right_back_wheel.move(127);
+	right_back_wheel.move(-127);
 }
 void turnRight()
 {
 	left_front_wheel.move(127);
-	left_back_wheel.move(127);
+	left_back_wheel.move(-127);
 	right_front_wheel.move(-127);
-	right_back_wheel.move(-127);
+	right_back_wheel.move(127);
 }
 void tankDrive()
 {
-	left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y));
-	left_back_wheel.move(master.get_analog(ANALOG_LEFT_Y));
-	right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
-	right_back_wheel.move(master.get_analog(ANALOG_RIGHT_Y));
+	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_A)){
+		speedSetting = speedSetting + 10;
+	} else if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_B)){
+		speedSetting = speedSetting - 10;
+	}
+	left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y) / 2 + speedSetting);
+	left_back_wheel.move(-master.get_analog(ANALOG_LEFT_Y) / 2 + speedSetting);
+	right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y) / 2 + speedSetting);
+	right_back_wheel.move(-master.get_analog(ANALOG_RIGHT_Y) / 2 + speedSetting);
 }
 void elevatorLift()
 {
@@ -104,8 +110,41 @@ void elevatorLift()
 		sweeper_motor.move(0);
 	}
 }
+
+
+void unloadGoal(){
+}
+
+void loadGoal(){
+	
+}
+
+void dispenseRing(){
+	
+	elevator_motor.move_relative(5,300);
+	sweeper_motor.move_relative(5,300)
+}
+
+void turnRobot(int degrees){
+
+}
+
 void autonomous()
 {
+	// Autonomous code
+	// Aim lift mechanism toward goal
+		// turn X degrees 
+	turnRobot(X);
+	// Go to goal
+		// Go X mm until reaches goal
+		moveForward();
+	// Load goal into robot
+	loadGoal();
+	// Dispense ring
+	dispenseRing();
+	// Move goal past line
+	// Unload goal
+	unloadGoal();
 }
 
 /**
@@ -133,3 +172,4 @@ void opcontrol()
 		tankDrive();
 		elevatorLift();
 	}
+}
