@@ -122,7 +122,7 @@ void loadGoal(){
 void dispenseRing(){
 	
 	elevator_motor.move_relative(5,300);
-	sweeper_motor.move_relative(5,300)
+	sweeper_motor.move_relative(5,300);
 }
 
 void turnRobot(int degrees){
