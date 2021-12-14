@@ -2,7 +2,6 @@
 #include "motors.h"
 #include "sensors.h"
 
-
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::Motor left_front_wheel(LEFT_FRONT_WHEELS_PORT); // This reverses the motor
 pros::Motor left_back_wheel(LEFT_BACK_WHEELS_PORT);
@@ -10,6 +9,8 @@ pros::Motor right_front_wheel(RIGHT_FRONT_WHEELS_PORT);
 pros::Motor right_back_wheel(RIGHT_BACK_WHEELS_PORT); // This reverses the motor
 pros::Motor sweeper_motor(SWEEPER_PORT, true);		  // This reverses the motor
 pros::Motor elevator_motor(ELEVATOR_PORT);
+pros::Motor left_lift_motor(LEFT_LIFT_PORT);
+pros::Motor right_lift_motor(RIGHT_LIFT_PORT, true);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -82,9 +83,12 @@ void turnRight()
 }
 void tankDrive()
 {
-	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_A)){
+	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_A))
+	{
 		speedSetting = speedSetting + 10;
-	} else if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_B)){
+	}
+	else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_B))
+	{
 		speedSetting = speedSetting - 10;
 	}
 	left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y) / 2 + speedSetting);
@@ -111,40 +115,42 @@ void elevatorLift()
 	}
 }
 
-
-void unloadGoal(){
+void unloadGoal()
+{
 }
 
-void loadGoal(){
-	
+void loadGoal()
+{
 }
 
-void dispenseRing(){
-	
-	elevator_motor.move_relative(5,300);
-	sweeper_motor.move_relative(5,300);
+void dispenseRing()
+{
+
+	elevator_motor.move_relative(720, 50);
+	sweeper_motor.move_relative(720, 50);
 }
 
-void turnRobot(int degrees){
-
+void turnRobot(int degrees)
+{
 }
 
 void autonomous()
 {
+
 	// Autonomous code
 	// Aim lift mechanism toward goal
-		// turn X degrees 
-	turnRobot(X);
+	// turn X degrees
+	// turnRobot(X);
 	// Go to goal
-		// Go X mm until reaches goal
-		moveForward();
+	// Go X mm until reaches goal
+	// moveForward();
 	// Load goal into robot
-	loadGoal();
+	// loadGoal();
 	// Dispense ring
-	dispenseRing();
+	// dispenseRing();
 	// Move goal past line
 	// Unload goal
-	unloadGoal();
+	// unloadGoal();
 }
 
 /**
@@ -162,6 +168,9 @@ void autonomous()
  */
 void opcontrol()
 {
+	int direction = 0; //The value 0 will tell the program what direction we want the motors to spin, and which switch we want deactivating the motors.
+	pros::ADIDigitalIn up_switch(UP_SWITCH_PORT);
+	pros::ADIDigitalIn down_switch(DOWN_SWITCH_PORT);
 	pros::c::adi_pin_mode(2, INPUT);
 	pros::ADIDigitalIn button(DIGITAL_SENSOR_PORT);
 
@@ -171,5 +180,31 @@ void opcontrol()
 		//pros::lcd::print(3, "button ->%d<-", button.get_value());
 		tankDrive();
 		elevatorLift();
+		if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)){
+			if (direction == 0)
+			{
+				if (down_switch.get_value() == 0)
+				{
+					left_lift_motor.move_velocity(-30);
+					right_lift_motor.move_velocity(-30);
+
+				}
+				direction++;
+			}
+			else
+			{
+				if (up_switch.get_value() == 0)
+				{
+					left_lift_motor.move_velocity(30);
+					right_lift_motor.move_velocity(30);
+				}
+				direction--;
+
+				// if (up_switch.get_value() == 1 || down_switch.get_value() == 1) {
+				// left_lift_motor.move_velocity(0);
+				// right_lift_motor.move_velocity(0);
+				// }
+			}
+		}
 	}
 }
