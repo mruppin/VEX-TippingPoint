@@ -7,10 +7,13 @@ pros::Motor left_front_wheel(LEFT_FRONT_WHEELS_PORT); // This reverses the motor
 pros::Motor left_back_wheel(LEFT_BACK_WHEELS_PORT);
 pros::Motor right_front_wheel(RIGHT_FRONT_WHEELS_PORT);
 pros::Motor right_back_wheel(RIGHT_BACK_WHEELS_PORT); // This reverses the motor
-pros::Motor sweeper_motor(SWEEPER_PORT, true);		  // This reverses the motor
 pros::Motor elevator_motor(ELEVATOR_PORT);
 pros::Motor left_lift_motor(LEFT_LIFT_PORT);
 pros::Motor right_lift_motor(RIGHT_LIFT_PORT, true);
+//Motor initial code
+pros::ADIDigitalIn up_switch(UP_SWITCH_PORT);
+pros::ADIDigitalIn down_switch(DOWN_SWITCH_PORT);
+int direction = 0; //The value 0 will tell the program what direction we want the motors to spin, and which switch we want deactivating the motors.
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -101,20 +104,50 @@ void elevatorLift()
 	if (master.get_digital(DIGITAL_A))
 	{
 		elevator_motor.move(127);
-		sweeper_motor.move(127);
 	}
 	else if (master.get_digital(DIGITAL_B))
 	{
 		elevator_motor.move(-127);
-		sweeper_motor.move(-127);
-	}
+}
 	else
 	{
 		elevator_motor.move(0);
-		sweeper_motor.move(0);
 	}
 }
-
+void goalLift()
+{
+	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN))
+	{
+		if (direction == 0)
+		{
+			direction++;
+		}
+		else
+		{
+			direction--;
+		}
+	}
+	if (direction == 0 && up_switch.get_value() == 0)
+	{
+		left_lift_motor.move_velocity(30);
+		right_lift_motor.move_velocity(30);
+	}
+	if (direction == 1 && down_switch.get_value() == 0)
+	{
+		left_lift_motor.move_velocity(-30);
+		right_lift_motor.move_velocity(-30);
+	}
+	if (direction == 0 && up_switch.get_value() == 1)
+	{
+		left_lift_motor.move_velocity(0);
+		right_lift_motor.move_velocity(0);
+	}
+	if (direction == 1 && down_switch.get_value() == 1)
+	{
+		left_lift_motor.move_velocity(0);
+		right_lift_motor.move_velocity(0);
+	}
+}
 void unloadGoal()
 {
 }
@@ -127,7 +160,6 @@ void dispenseRing()
 {
 
 	elevator_motor.move_relative(720, 50);
-	sweeper_motor.move_relative(720, 50);
 }
 
 void turnRobot(int degrees)
@@ -168,9 +200,6 @@ void autonomous()
  */
 void opcontrol()
 {
-	int direction = 0; //The value 0 will tell the program what direction we want the motors to spin, and which switch we want deactivating the motors.
-	pros::ADIDigitalIn up_switch(UP_SWITCH_PORT);
-	pros::ADIDigitalIn down_switch(DOWN_SWITCH_PORT);
 	pros::c::adi_pin_mode(2, INPUT);
 	pros::ADIDigitalIn button(DIGITAL_SENSOR_PORT);
 
@@ -180,31 +209,6 @@ void opcontrol()
 		//pros::lcd::print(3, "button ->%d<-", button.get_value());
 		tankDrive();
 		elevatorLift();
-		if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)){
-			if (direction == 0)
-			{
-				if (down_switch.get_value() == 0)
-				{
-					left_lift_motor.move_velocity(-30);
-					right_lift_motor.move_velocity(-30);
-
-				}
-				direction++;
-			}
-			else
-			{
-				if (up_switch.get_value() == 0)
-				{
-					left_lift_motor.move_velocity(30);
-					right_lift_motor.move_velocity(30);
-				}
-				direction--;
-
-				// if (up_switch.get_value() == 1 || down_switch.get_value() == 1) {
-				// left_lift_motor.move_velocity(0);
-				// right_lift_motor.move_velocity(0);
-				// }
-			}
-		}
+		goalLift();
 	}
 }
