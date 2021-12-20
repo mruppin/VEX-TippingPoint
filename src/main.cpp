@@ -5,8 +5,8 @@
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::Motor left_front_wheel(LEFT_FRONT_WHEELS_PORT); // This reverses the motor
 pros::Motor left_back_wheel(LEFT_BACK_WHEELS_PORT);
-pros::Motor right_front_wheel(RIGHT_FRONT_WHEELS_PORT);
-pros::Motor right_back_wheel(RIGHT_BACK_WHEELS_PORT); // This reverses the motor
+pros::Motor right_front_wheel(RIGHT_FRONT_WHEELS_PORT, true);
+pros::Motor right_back_wheel(RIGHT_BACK_WHEELS_PORT, true); // This reverses the motor
 pros::Motor elevator_motor(ELEVATOR_PORT);
 pros::Motor left_lift_motor(LEFT_LIFT_PORT);
 pros::Motor right_lift_motor(RIGHT_LIFT_PORT, true);
@@ -86,26 +86,26 @@ void turnRight()
 }
 void tankDrive()
 {
-	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_A))
+	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_X))
 	{
-		speedSetting = speedSetting + 10;
+		if(speedSetting == 2){
+			speedSetting = 1;
+		} else {
+			speedSetting = 2;
+		}
 	}
-	else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_B))
-	{
-		speedSetting = speedSetting - 10;
-	}
-	left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y) / 2 + speedSetting);
-	left_back_wheel.move(-master.get_analog(ANALOG_LEFT_Y) / 2 + speedSetting);
-	right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y) / 2 + speedSetting);
-	right_back_wheel.move(-master.get_analog(ANALOG_RIGHT_Y) / 2 + speedSetting);
+	left_front_wheel.move(master.get_analog(ANALOG_LEFT_Y) / speedSetting);
+	left_back_wheel.move(master.get_analog(ANALOG_LEFT_Y) / speedSetting);
+	right_front_wheel.move(master.get_analog(ANALOG_RIGHT_Y) / speedSetting);
+	right_back_wheel.move(master.get_analog(ANALOG_RIGHT_Y) / speedSetting);
 }
 void elevatorLift()
 {
-	if (master.get_digital(DIGITAL_A))
+	if (master.get_digital(E_CONTROLLER_DIGITAL_UP))
 	{
 		elevator_motor.move(127);
 	}
-	else if (master.get_digital(DIGITAL_B))
+	else if (master.get_digital(E_CONTROLLER_DIGITAL_DOWN))
 	{
 		elevator_motor.move(-127);
 }
@@ -116,7 +116,7 @@ void elevatorLift()
 }
 void goalLift()
 {
-	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN))
+	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_A))
 	{
 		if (direction == 0)
 		{
