@@ -56,19 +56,12 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void moveForward()
+void moveMM(int mm)
 {
-	left_front_wheel.move(127);
-	left_back_wheel.move(-127);
-	right_front_wheel.move(127);
-	right_back_wheel.move(-127);
-}
-void moveBack()
-{
-	left_front_wheel.move(-127);
-	left_back_wheel.move(127);
-	right_front_wheel.move(-127);
-	right_back_wheel.move(127);
+	left_front_wheel.move_relative(mm * 3.502, 75);
+	left_back_wheel.move_relative(mm *  3.502, 75);
+	right_front_wheel.move_relative(mm *  3.502, 75);
+	right_back_wheel.move_relative(mm *  3.502, 75);
 }
 void turnLeft()
 {
@@ -170,6 +163,7 @@ void autonomous()
 {
 
 	// Autonomous code
+	moveMM(450);
 	// Aim lift mechanism toward goal
 	// turn X degrees
 	// turnRobot(X);
