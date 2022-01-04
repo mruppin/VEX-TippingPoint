@@ -58,27 +58,16 @@ void competition_initialize() {}
  */
 void moveMM(int mm)
 {
-	left_front_wheel.tare_position();
 	left_front_wheel.move_relative(mm * 3.502, 75);
 	left_back_wheel.move_relative(mm *  3.502, 75);
 	right_front_wheel.move_relative(mm *  3.502, 75);
 	right_back_wheel.move_relative(mm *  3.502, 75);
-	while(left_front_wheel.get_position() < mm * 3.4, 75){
-		pros::delay(200);
-		printf("%d", left_front_wheel.get_position());
-	}
-	
 }
 void autoTurn(double pos){
-	left_front_wheel.tare_position();
 	left_front_wheel.move_relative(pos, 75);
 	left_back_wheel.move_relative(pos, 75);
 	right_front_wheel.move_relative(-pos, 75);
 	right_back_wheel.move_relative(-pos, 75);
-	while(left_front_wheel.get_position() < pos){
-		pros::delay(200);
-		printf("%d", left_front_wheel.get_position());
-	}
 }
 void turnLeft()
 {
@@ -182,11 +171,8 @@ void autonomous()
 	// Autonomous code
 	moveMM(650);
 	// Aim lift mechanism toward goal
-	autoTurn(1180 * 3);
+	autoTurn(1180);
 	moveMM(1000);
-	// goalLift();
-	
-	
 	// turn X degrees
 	// turnRobot(X);
 	// Go to goal
