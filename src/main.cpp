@@ -58,16 +58,67 @@ void competition_initialize() {}
  */
 void moveMM(int mm)
 {
-	left_front_wheel.move_relative(mm * 3.502, 75);
-	left_back_wheel.move_relative(mm *  3.502, 75);
-	right_front_wheel.move_relative(mm *  3.502, 75);
-	right_back_wheel.move_relative(mm *  3.502, 75);
+	delay(2);
+	left_front_wheel.tare_position();
+	left_front_wheel.move_relative(mm * 3.502, 150);
+	left_back_wheel.move_relative(mm * 3.502, 150);
+	right_front_wheel.move_relative(mm * 3.502, 150);
+	right_back_wheel.move_relative(mm * 3.502, 150);
+	while (!((left_front_wheel.get_position() < mm * 3.502 + 5) && (left_front_wheel.get_position() > mm * 3.502 - 5)))
+	{
+		// Continue running this loop as long as the motor is not within +-5 units of its goal
+		pros::delay(2);
+	}
+	left_front_wheel.tare_position();
 }
-void autoTurn(double pos){
+void autoTurn(double pos)
+{
+	delay(2);
+	left_front_wheel.tare_position();
 	left_front_wheel.move_relative(pos, 75);
 	left_back_wheel.move_relative(pos, 75);
 	right_front_wheel.move_relative(-pos, 75);
 	right_back_wheel.move_relative(-pos, 75);
+	while (!((left_front_wheel.get_position() < pos + 5) && (left_front_wheel.get_position() > pos - 5)))
+	{
+		// Continue running this loop as long as the motor is not within +-5 units of its goal
+		pros::delay(2);
+	}
+	left_front_wheel.tare_position();
+}
+void goalLiftUp()
+{
+	while (true)
+	{
+		if (up_switch.get_value() == 1)
+		{
+			left_lift_motor.move_velocity(-30);
+			right_lift_motor.move_velocity(-30);
+		}
+		else if (down_switch.get_value() == 1)
+		{
+			left_lift_motor.move_velocity(0);
+			right_lift_motor.move_velocity(0);
+			return;
+		}
+	}
+}
+void goalLiftDown()
+{
+	while (true)
+	{
+		if (down_switch.get_value() == 1)
+		{
+			left_lift_motor.move_velocity(30);
+			right_lift_motor.move_velocity(30);
+		}
+		else if (up_switch.get_value() == 1)
+		{
+			left_lift_motor.move_velocity(0);
+			right_lift_motor.move_velocity(0);
+			return;
+		}
+	}
 }
 void turnLeft()
 {
@@ -87,9 +138,12 @@ void tankDrive()
 {
 	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_X))
 	{
-		if(speedSetting == 2){
+		if (speedSetting == 2)
+		{
 			speedSetting = 1;
-		} else {
+		}
+		else
+		{
 			speedSetting = 2;
 		}
 	}
@@ -100,14 +154,14 @@ void tankDrive()
 }
 void elevatorLift()
 {
-	if (master.get_digital(E_CONTROLLER_DIGITAL_UP))
+	if (master.get_digital(E_CONTROLLER_DIGITAL_R1))
 	{
 		elevator_motor.move(127);
 	}
-	else if (master.get_digital(E_CONTROLLER_DIGITAL_DOWN))
+	else if (master.get_digital(E_CONTROLLER_DIGITAL_L1))
 	{
 		elevator_motor.move(-127);
-}
+	}
 	else
 	{
 		elevator_motor.move(0);
@@ -147,32 +201,30 @@ void goalLift()
 		right_lift_motor.move_velocity(0);
 	}
 }
-void unloadGoal()
-{
-}
-
-void loadGoal()
-{
-}
 
 void dispenseRing()
 {
 
 	elevator_motor.move_relative(720, 50);
 }
-
-void turnRobot(int degrees)
-{
-}
-
 void autonomous()
 {
 
 	// Autonomous code
-	moveMM(650);
+	moveMM(-750);
 	// Aim lift mechanism toward goal
-	autoTurn(1180);
-	moveMM(1000);
+	// 1180 is 90 degrees
+	autoTurn(1110);
+	moveMM(-2000);
+	goalLiftUp();
+	moveMM(-470);
+	autoTurn(20);
+	goalLiftDown(); //Defective function make sure to fix
+	// dispenseRing();
+	// win point movement
+	// moveMM(100);
+	// moveMM(100);
+	// dispenseRing();
 	// turn X degrees
 	// turnRobot(X);
 	// Go to goal
