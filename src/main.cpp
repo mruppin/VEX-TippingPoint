@@ -204,8 +204,15 @@ void goalLift()
 
 void dispenseRing()
 {
-
-	elevator_motor.move_relative(720, 50);
+	delay(2);
+	elevator_motor.tare_position();
+	elevator_motor.move_relative(8000, 300);
+	while (!((elevator_motor.get_position() < 8000 + 5) && (elevator_motor.get_position() > 8000 - 5)))
+	{
+		// Continue running this loop as long as the motor is not within +-5 units of its goal
+		pros::delay(2);
+	}
+	elevator_motor.tare_position();
 }
 void autonomous()
 {
@@ -219,12 +226,15 @@ void autonomous()
 	goalLiftUp();
 	moveMM(-470);
 	autoTurn(20);
-	goalLiftDown(); //Defective function make sure to fix
-	// dispenseRing();
+	goalLiftDown(); 
+	dispenseRing();
+	// Place goal down; 
+	goalLiftDown();
 	// win point movement
-	// moveMM(100);
-	// moveMM(100);
-	// dispenseRing();
+	 moveMM(-500);
+	 moveMM(150);
+	 goalLiftDown();
+	 moveMM(50);
 	// turn X degrees
 	// turnRobot(X);
 	// Go to goal
