@@ -75,10 +75,10 @@ void autoTurn(double pos)
 {
 	delay(2);
 	left_front_wheel.tare_position();
-	left_front_wheel.move_relative(pos, 75);
-	left_back_wheel.move_relative(pos, 75);
-	right_front_wheel.move_relative(-pos, 75);
-	right_back_wheel.move_relative(-pos, 75);
+	left_front_wheel.move_relative(pos, 50);
+	left_back_wheel.move_relative(pos, 50);
+	right_front_wheel.move_relative(-pos, 50);
+	right_back_wheel.move_relative(-pos, 50);
 	while (!((left_front_wheel.get_position() < pos + 5) && (left_front_wheel.get_position() > pos - 5)))
 	{
 		// Continue running this loop as long as the motor is not within +-5 units of its goal
@@ -226,15 +226,13 @@ void autonomous()
 	goalLiftUp();
 	moveMM(-470);
 	autoTurn(20);
-	goalLiftDown(); 
-	dispenseRing();
-	// Place goal down; 
 	goalLiftDown();
+	dispenseRing();
+	// Place goal down;
 	// win point movement
-	 moveMM(-500);
-	 moveMM(150);
-	 goalLiftDown();
-	 moveMM(50);
+	moveMM(2000);
+	goalLiftUp();
+	moveMM(90);
 	// turn X degrees
 	// turnRobot(X);
 	// Go to goal
