@@ -24,7 +24,7 @@ int direction = 0; //The value 0 will tell the program what direction we want th
 void initialize()
 {
 	pros::lcd::initialize();
-	pros::ADIUltrasonic ultrasonic(ULTRA_PING_PORT, ULTRA_ECHO_PORT);
+	// pros::ADIUltrasonic ultrasonic(ULTRA_PING_PORT, ULTRA_ECHO_PORT);
 }
 
 /**
@@ -214,6 +214,22 @@ void dispenseRing()
 	}
 	elevator_motor.tare_position();
 }
+void stop()
+{
+	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_Y))
+	{
+		left_lift_motor.move_velocity(0);
+		right_lift_motor.move_velocity(0);
+		left_front_wheel.move_velocity(0);
+		right_front_wheel.move_velocity(0);
+		left_back_wheel.move_velocity(0);
+		right_back_wheel.move_velocity(0);
+		elevator_motor.move_velocity(0);
+		while(master.get_digital_new_press(E_CONTROLLER_DIGITAL_Y) != true){
+			delay(2);
+		}
+	}
+}
 void autonomous()
 {
 
@@ -246,7 +262,6 @@ void autonomous()
 	// Unload goal
 	// unloadGoal();
 }
-
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -272,5 +287,6 @@ void opcontrol()
 		tankDrive();
 		elevatorLift();
 		goalLift();
+		stop();
 	}
 }

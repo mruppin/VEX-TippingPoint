@@ -6,4 +6,4 @@
 #define RIGHT_LIFT_PORT 20 
 #define ELEVATOR_PORT 21
 #define MOTOR_MAX_SPEED 100 // The motor has the 36 Gearset
-int speedSetting = 0;
+int speedSetting = 1;
