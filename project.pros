@@ -1,7 +1,7 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "PROSTemplate",
+        "project_name": "Right Side Auto",
         "target": "v5",
         "templates": {
             "kernel": {

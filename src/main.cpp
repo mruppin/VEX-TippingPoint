@@ -204,6 +204,7 @@ void goalLift()
 
 void dispenseRing()
 {
+	delay(2);
 	elevator_motor.tare_position();
 	elevator_motor.move_relative(8000, 300);
 	while (!((elevator_motor.get_position() < 8000 + 5) && (elevator_motor.get_position() > 8000 - 5)))
@@ -213,7 +214,8 @@ void dispenseRing()
 	}
 	elevator_motor.tare_position();
 }
-void stop(){}
+void stop()
+{}
 void autonomous()
 {
 
@@ -225,7 +227,7 @@ void autonomous()
 		// 1180 is 90 degrees
 		autoTurn(1120, 120);
 		moveMM(-2200, 300);
-		autoTurn(200,120);
+		// autoTurn(200,120);
 		moveMM(-35,100);
 		goalLiftUp();
 		moveMM(-500, 150);
