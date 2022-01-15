@@ -182,13 +182,13 @@ void goalLift()
 	}
 	if (direction == 0 && up_switch.get_value() == 0)
 	{
-		left_lift_motor.move_velocity(30);
-		right_lift_motor.move_velocity(30);
+		left_lift_motor.move_velocity(90);
+		right_lift_motor.move_velocity(90);
 	}
 	if (direction == 1 && down_switch.get_value() == 0)
 	{
-		left_lift_motor.move_velocity(-30);
-		right_lift_motor.move_velocity(-30);
+		left_lift_motor.move_velocity(-90);
+		right_lift_motor.move_velocity(-90);
 	}
 	if (direction == 0 && up_switch.get_value() == 1)
 	{
@@ -204,7 +204,6 @@ void goalLift()
 
 void dispenseRing()
 {
-	delay(2);
 	elevator_motor.tare_position();
 	elevator_motor.move_relative(8000, 300);
 	while (!((elevator_motor.get_position() < 8000 + 5) && (elevator_motor.get_position() > 8000 - 5)))
@@ -214,23 +213,7 @@ void dispenseRing()
 	}
 	elevator_motor.tare_position();
 }
-void stop()
-{
-	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_Y))
-	{
-		left_lift_motor.move_velocity(0);
-		right_lift_motor.move_velocity(0);
-		left_front_wheel.move_velocity(0);
-		right_front_wheel.move_velocity(0);
-		left_back_wheel.move_velocity(0);
-		right_back_wheel.move_velocity(0);
-		elevator_motor.move_velocity(0);
-		while (master.get_digital_new_press(E_CONTROLLER_DIGITAL_Y) != true)
-		{
-			delay(2);
-		}
-	}
-}
+void stop(){}
 void autonomous()
 {
 
@@ -245,7 +228,7 @@ void autonomous()
 		autoTurn(200,120);
 		moveMM(-35,100);
 		goalLiftUp();
-		moveMM(-470, 150);
+		moveMM(-500, 150);
 		// autoTurn(20, 50);
 		goalLiftDown();
 		dispenseRing();
