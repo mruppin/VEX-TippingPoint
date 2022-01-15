@@ -64,7 +64,7 @@ void moveMM(int mm, int speed)
 	left_back_wheel.move_relative(mm * 3.502, speed);
 	right_front_wheel.move_relative(mm * 3.502, speed);
 	right_back_wheel.move_relative(mm * 3.502, speed);
-	while (!((left_front_wheel.get_position() < mm * 3.502 + 5) && (left_front_wheel.get_position() > mm * 3.502 - 5)))
+	while (!((left_front_wheel.get_position() < mm * 3.502 + 10) && (left_front_wheel.get_position() > mm * 3.502 - 10)))
 	{
 		// Continue running this loop as long as the motor is not within +-5 units of its goal
 		pros::delay(2);
@@ -92,8 +92,8 @@ void goalLiftUp()
 	{
 		if (up_switch.get_value() == 1)
 		{
-			left_lift_motor.move_velocity(-30);
-			right_lift_motor.move_velocity(-30);
+			left_lift_motor.move_velocity(-90);
+			right_lift_motor.move_velocity(-90);
 		}
 		else if (down_switch.get_value() == 1)
 		{
@@ -109,8 +109,8 @@ void goalLiftDown()
 	{
 		if (down_switch.get_value() == 1)
 		{
-			left_lift_motor.move_velocity(30);
-			right_lift_motor.move_velocity(30);
+			left_lift_motor.move_velocity(90);
+			right_lift_motor.move_velocity(90);
 		}
 		else if (up_switch.get_value() == 1)
 		{
@@ -240,8 +240,10 @@ void autonomous()
 		moveMM(-750, 225);
 		// Aim lift mechanism toward goal
 		// 1180 is 90 degrees
-		autoTurn(1150, 40);
-		moveMM(-2200, 250);
+		autoTurn(1120, 120);
+		moveMM(-2200, 300);
+		autoTurn(200,120);
+		moveMM(-35,100);
 		goalLiftUp();
 		moveMM(-470, 150);
 		// autoTurn(20, 50);
@@ -249,14 +251,14 @@ void autonomous()
 		dispenseRing();
 		// Place goal down;
 		// win point movement
-		moveMM(2000, 250);
+		moveMM(500, 250);
 		goalLiftUp();
-		moveMM(90, 150);
+		moveMM(200, 150);
 	}
 	else
 	{
 		goalLiftUp();
-		moveMM(-260, 75);
+		moveMM(-360, 75);
 		goalLiftDown();
 		dispenseRing();
 		autoTurn(-1110, 50);
