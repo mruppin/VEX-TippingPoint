@@ -88,14 +88,12 @@ void autoTurn(double pos, int speed)
 }
 void goalLiftUp()
 {
+	left_lift_motor.move_velocity(-90);
+	right_lift_motor.move_velocity(-90);
 	while (true)
 	{
-		if (up_switch.get_value() == 1)
-		{
-			left_lift_motor.move_velocity(-90);
-			right_lift_motor.move_velocity(-90);
-		}
-		else if (down_switch.get_value() == 1)
+
+		if (down_switch.get_value() == 1)
 		{
 			left_lift_motor.move_velocity(0);
 			right_lift_motor.move_velocity(0);
@@ -105,14 +103,11 @@ void goalLiftUp()
 }
 void goalLiftDown()
 {
+	left_lift_motor.move_velocity(90);
+	right_lift_motor.move_velocity(90);
 	while (true)
 	{
-		if (down_switch.get_value() == 1)
-		{
-			left_lift_motor.move_velocity(90);
-			right_lift_motor.move_velocity(90);
-		}
-		else if (up_switch.get_value() == 1)
+		if (up_switch.get_value() == 1)
 		{
 			left_lift_motor.move_velocity(0);
 			right_lift_motor.move_velocity(0);
@@ -215,33 +210,46 @@ void dispenseRing()
 	elevator_motor.tare_position();
 }
 void stop()
-{}
+{
+}
 void autonomous()
 {
 
 	// Autonomous code
-	if (autonomousIsRight == 0)
-	{
-		moveMM(-750, 225);
-		// Aim lift mechanism toward goal
-		// 1180 is 90 degrees
-		autoTurn(1120, 120);
-		moveMM(-2200, 300);
-		// autoTurn(200,120);
-		moveMM(-35,100);
-		goalLiftUp();
-		moveMM(-500, 150);
-		// autoTurn(20, 50);
-		goalLiftDown();
-		dispenseRing();
-		// Place goal down;
-		// win point movement
-		moveMM(500, 250);
-		goalLiftUp();
-		moveMM(200, 150);
-	}
-	else
-	{
+	// if (autonomousIsRight == 0)
+	// {
+	// 	moveMM(-750, 225);
+	// 	// Aim lift mechanism toward goal
+	// 	// 1180 is 90 degrees
+	// 	autoTurn(1120, 120);
+	// 	moveMM(-2200, 300);
+	// 	// autoTurn(200,120);
+	// 	moveMM(-35, 100);
+	// 	goalLiftUp();
+	// 	moveMM(-500, 150);
+	// 	// autoTurn(20, 50);
+	// 	goalLiftDown();
+	// 	dispenseRing();
+	// 	// Place goal down;
+	// 	// win point movement
+	// 	moveMM(500, 250);
+	// 	goalLiftUp();
+	// 	moveMM(200, 150);
+	// }
+	// else
+	//{
+		// goalLiftUp();
+		// moveMM(-360, 75);
+		// goalLiftDown();
+		// dispenseRing();
+		// autoTurn(-1110, 50);
+		// moveMM(-250, 75);
+		// goalLiftUp();
+		// moveMM(300, 75);
+	//}
+
+
+		//Right side code here
 		goalLiftUp();
 		moveMM(-360, 75);
 		goalLiftDown();
@@ -250,8 +258,8 @@ void autonomous()
 		moveMM(-250, 75);
 		goalLiftUp();
 		moveMM(300, 75);
-	}
-}
+	
+		//Left side code here}
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
