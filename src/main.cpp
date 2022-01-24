@@ -88,31 +88,28 @@ void autoTurn(double pos, int speed)
 }
 void goalLiftUp()
 {
-	left_lift_motor.move_velocity(-90);
-	right_lift_motor.move_velocity(-90);
-	while (true)
+	delay(2);
+	int pos = -900;
+	left_lift_motor.tare_position();
+	left_lift_motor.move_relative(pos, 100);
+	right_lift_motor.move_relative(pos, 100);
+	while (!((left_lift_motor.get_position() < pos + 10) && (left_lift_motor.get_position() > pos - 10)))
 	{
-
-		if (down_switch.get_value() == 1)
-		{
-			left_lift_motor.move_velocity(0);
-			right_lift_motor.move_velocity(0);
-			return;
-		}
+		// Continue running this loop as long as the motor is not within +-5 units of its goal
+		pros::delay(2);
 	}
 }
 void goalLiftDown()
 {
-	left_lift_motor.move_velocity(90);
-	right_lift_motor.move_velocity(90);
-	while (true)
+	delay(2);
+	int pos = 900;
+	left_lift_motor.tare_position();
+	left_lift_motor.move_relative(pos, 100);
+	right_lift_motor.move_relative(pos, 100);
+	while (!((left_lift_motor.get_position() < pos + 10) && (left_lift_motor.get_position() > pos - 10)))
 	{
-		if (up_switch.get_value() == 1)
-		{
-			left_lift_motor.move_velocity(0);
-			right_lift_motor.move_velocity(0);
-			return;
-		}
+		// Continue running this loop as long as the motor is not within +-5 units of its goal
+		pros::delay(2);
 	}
 }
 void turnLeft()
@@ -273,6 +270,7 @@ void autonomous()
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+}
 void opcontrol()
 {
 	pros::c::adi_pin_mode(2, INPUT);
