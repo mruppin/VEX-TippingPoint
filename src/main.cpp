@@ -188,8 +188,8 @@ void goalLift()
 	}
 	if (direction == 1 && ranBefore == 0)
 	{
-		left_lift_motor.move_absolute(-700, 100/speedSetting);
-		right_lift_motor.move_absolute(-700, 100/speedSetting);
+		left_lift_motor.move_absolute(-750, 100/speedSetting);
+		right_lift_motor.move_absolute(-750, 100/speedSetting);
 		ranBefore=1;
 	}
 }
@@ -207,14 +207,14 @@ void armControl(){
 			direction2--;
 		}
 	}
-	if (direction2 == 0 && ranBefore2 == 0)
+	if (direction2 == 0 && ranBefore2 == 0) 
 	{
-		arm_motor.move_absolute(450, 100/speedSetting);
+		arm_motor.move_absolute(-900, 100/speedSetting);
 		ranBefore2=1;
 	}
 	if (direction2 == 1 && ranBefore2 == 0)
 	{
-		arm_motor.move_absolute(50, 100/speedSetting);
+		arm_motor.move_absolute(-280, 100/speedSetting);
 		ranBefore2=1;
 	}
 }
@@ -308,6 +308,7 @@ void autonomous()
 		moveMM(-100, 300);
 		goalLiftIn();
 		// Second autonomous
+		printf("In Second autonomus");
 			goalLiftOut();
 			moveMM(360, 75);
 			goalLiftIn();
