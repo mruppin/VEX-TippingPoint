@@ -209,19 +209,16 @@ void armControl(){
 	}
 	if (direction2 == 0 && ranBefore2 == 0)
 	{
-		arm_motor.move_relative(400, 100/speedSetting);
+		arm_motor.move_absolute(450, 100/speedSetting);
 		ranBefore2=1;
 	}
 	if (direction2 == 1 && ranBefore2 == 0)
 	{
-		arm_motor.move_relative(-400, 100/speedSetting);
+		arm_motor.move_absolute(50, 100/speedSetting);
 		ranBefore2=1;
 	}
 }
 
-// void goalRamp(){
-// 	if()
-// }
 void stop()
 {
 	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_Y))
