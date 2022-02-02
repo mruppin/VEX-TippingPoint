@@ -12,7 +12,6 @@ pros::Motor elevator_motor(ELEVATOR_PORT);
 pros::Motor left_lift_motor(LEFT_LIFT_PORT);
 pros::Motor right_lift_motor(RIGHT_LIFT_PORT, true);
 pros::Motor arm_motor(ARM_PORT);
-// pros::Motor::set_brake_mode();
 // Motor initial code
 pros::ADIDigitalIn up_switch(UP_SWITCH_PORT);
 pros::ADIDigitalIn down_switch(DOWN_SWITCH_PORT);
@@ -20,6 +19,7 @@ int direction = 0; // The value 0 will tell the program what direction we want t
 int ranBefore = 1;
 int direction2 = 1; // The value 0 will tell the program what direction we want the motors to spin, and which switch we want deactivating the motors.
 int ranBefore2 = 1;
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -91,7 +91,7 @@ void autoTurn(double pos, int speed)
 	}
 	left_front_wheel.tare_position();
 }
-void goalLiftUp()
+void goalLiftOut()
 {
 	delay(2);
 	int pos = -850;
@@ -104,7 +104,7 @@ void goalLiftUp()
 		pros::delay(2);
 	}
 }
-void goalLiftDown()
+void goalLiftIn()
 {
 	delay(2);
 	int pos = 850;
@@ -130,7 +130,6 @@ void turnRight()
 	left_back_wheel.move(-127);
 	right_front_wheel.move(-127);
 	right_back_wheel.move(127);
-	std::cout << "Hello World";
 }
 void speedControl(){
 	if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_X))
@@ -183,14 +182,14 @@ void goalLift()
 	}
 	if (direction == 0 && ranBefore == 0)
 	{
-		left_lift_motor.move_relative(750, 100);
-		right_lift_motor.move_relative(750, 100);
+		left_lift_motor.move_absolute(0, 100/speedSetting);
+		right_lift_motor.move_absolute(0, 100/speedSetting);
 		ranBefore=1;
 	}
 	if (direction == 1 && ranBefore == 0)
 	{
-		left_lift_motor.move_relative(-750, 100);
-		right_lift_motor.move_relative(-750, 100);
+		left_lift_motor.move_absolute(-700, 100/speedSetting);
+		right_lift_motor.move_absolute(-700, 100/speedSetting);
 		ranBefore=1;
 	}
 }
@@ -210,12 +209,12 @@ void armControl(){
 	}
 	if (direction2 == 0 && ranBefore2 == 0)
 	{
-		arm_motor.move_relative(200, 100);
+		arm_motor.move_relative(400, 100/speedSetting);
 		ranBefore2=1;
 	}
 	if (direction2 == 1 && ranBefore2 == 0)
 	{
-		arm_motor.move_relative(-200, 100);
+		arm_motor.move_relative(-400, 100/speedSetting);
 		ranBefore2=1;
 	}
 }
@@ -255,6 +254,8 @@ void dispenseRing()
 
 void autonomous()
 {
+	left_lift_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+	right_lift_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
 	// Autonomous code
 	// if (autonomousIsRight == 0)
@@ -266,52 +267,59 @@ void autonomous()
 	// 	moveMM(-2200, 300);
 	// 	// autoTurn(200,120);
 	// 	moveMM(-35, 100);
-	// 	goalLiftUp();
+	// 	goalLiftOut();
 	// 	moveMM(-500, 150);
 	// 	// autoTurn(20, 50);
-	// 	goalLiftDown();
+	// 	goalLiftIn();
 	// 	dispenseRing();
 	// 	// Place goal down;
 	// 	// win point movement
 	// 	moveMM(500, 250);
-	// 	goalLiftUp();
+	// 	goalLiftOut();
 	// 	moveMM(200, 150);
 	// }
 	// else
 	//{
-		// goalLiftUp();
+		// goalLiftOut();
 		// moveMM(-360, 75);
-		// goalLiftDown();
+		// goalLiftIn();
 		// dispenseRing();
 		// autoTurn(-1110, 50);
 		// moveMM(-250, 75);
-		// goalLiftUp();
+		// goalLiftOut();
 		// moveMM(300, 75);
 	//}
 
 
 		//Right side code here
-			// goalLiftUp();
+			// goalLiftOut();
 			// moveMM(360, 75);
-			// goalLiftDown();
+			// goalLiftIn();
 			// dispenseRing();
 			// autoTurn(-1110, 50);
 			// moveMM(250, 75);
-			// goalLiftUp();
+			// goalLiftOut();
 			// moveMM(-300, 75);
-			// goalLiftDown();
+			// goalLiftIn();
 		//First Autonnomous goal
-		moveMM(1600, 300);
-		autoTurn(-1150, 100);
+		moveMM(800, 300);
+		goalLiftOut();
+		moveMM(600, 80);
+		goalLiftIn();
+		moveMM(-1150, 300);
+		goalLiftOut();
 		moveMM(-100, 300);
-		goalLiftUp();
-		moveMM(500, 80);
-		goalLiftDown();
-		autoTurn(1110, 100);
-		moveMM(-1300, 300);
-		goalLiftUp();
-		moveMM(-100, 300);
-		goalLiftDown();
+		goalLiftIn();
+		// Second autonomous
+			goalLiftOut();
+			moveMM(360, 75);
+			goalLiftIn();
+			dispenseRing();
+			autoTurn(-1110, 50);
+			moveMM(250, 75);
+			goalLiftOut();
+			moveMM(-300, 75);
+			goalLiftIn();
 		//Left side code here}
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -329,6 +337,11 @@ void autonomous()
 }
 void opcontrol()
 {
+	arm_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+	arm_motor.move_relative(30, 100);
+	left_lift_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+	right_lift_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
 	pros::c::adi_pin_mode(2, INPUT);
 	pros::ADIDigitalIn button(DIGITAL_SENSOR_PORT);
 	while (true)
