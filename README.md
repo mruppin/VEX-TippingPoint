@@ -1,3 +1,2 @@
 # VEX-TippingPoint
-VEX Tipping Point
-This is all the code for VEX Tipping point for Whitnall High School Robotics Team. 
+VEX Tipping Point is code for VEX Tipping point competition for Vex Robotics specifically for Whitnall High School Robotics Team. 
